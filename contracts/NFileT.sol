@@ -1,9 +1,11 @@
 //SPDX-License-Identifier: Unlicense
 pragma solidity 0.8.4;
 
+import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
 import "./interfaces/INFileT.sol";
 
-contract NFileT is INFileT {
+contract NFileT is INFileT, ERC1155, Ownable {
     uint256 public constant AUDIO = 1;
     uint256 public constant VIDEO = 2;
     uint256 public constant IMAGE = 3;
@@ -23,7 +25,7 @@ contract NFileT is INFileT {
         address _receiver,
         uint256 _id,
         uint256 _amount
-    ) external onlyOwner returns (bool) {
+    ) external override onlyOwner returns (bool) {
         _mint(_receiver, _id, _amount, "");
         emit Minted(_receiver, _id, _amount);
         return true;

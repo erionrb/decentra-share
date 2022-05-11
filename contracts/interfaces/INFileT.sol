@@ -1,10 +1,7 @@
 //SPDX-License-Identifier: Unlicense
 pragma solidity 0.8.4;
 
-import "@openzeppelin/contracts/access/Ownable.sol";
-import "@openzeppelin/contracts/token/ERC1155/IERC1155.sol";
-
-interface INFileT is IERC1155 {
+interface INFileT {
     /**
      * @dev Mints a new token to the given address.
      * @param _receiver Address to mint the token to.
