@@ -16,6 +16,17 @@ contract NFileT is INFileT, ERC1155, Ownable {
     event Minted(address _receiver, uint256 _id, uint256 _amount);
 
     /**
+     * @dev Verify that the given id is valid.
+     */
+    modifier onlyAvailable(uint256 _id) {
+        require(
+            _id == AUDIO || _id == VIDEO || _id == IMAGE,
+            "Invalid file type"
+        );
+        _;
+    }
+
+    /**
      * @dev Mints a new token to the given address.
      * @param _receiver Address to mint the token to.
      * @param _id Token id.
@@ -25,7 +36,7 @@ contract NFileT is INFileT, ERC1155, Ownable {
         address _receiver,
         uint256 _id,
         uint256 _amount
-    ) external override onlyOwner returns (bool) {
+    ) external override onlyOwner onlyAvailable(_id) returns (bool) {
         _mint(_receiver, _id, _amount, "");
         emit Minted(_receiver, _id, _amount);
         return true;
