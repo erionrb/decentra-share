@@ -8,9 +8,7 @@ interface INFileT {
      * @param _id Token id.
      * @param _amount Amount of tokens to mint.
      */
-    function mint(
-        address _receiver,
-        uint256 _id,
-        uint256 _amount
-    ) external returns (bool);
+    function mint(address _owner, string memory _tokenURI)
+        public
+        returns (uint256)
 }

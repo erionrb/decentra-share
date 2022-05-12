@@ -1,44 +1,55 @@
 //SPDX-License-Identifier: Unlicense
 pragma solidity 0.8.4;
 
-import "@openzeppelin/contracts/access/Ownable.sol";
-import "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
 import "./interfaces/INFileT.sol";
+import "@openzeppelin/contracts/utils/Counters.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 
-contract NFileT is INFileT, ERC1155, Ownable {
-    uint256 public constant AUDIO = 1;
-    uint256 public constant VIDEO = 2;
-    uint256 public constant IMAGE = 3;
-    uint256 public constant DEFAULT_FILE = 0;
+contract NFileT is INFileT, ERC721URIStorage, Ownable {
+    using Counters for Counters.Counter;
+    Counters.Counter private _tokenIds;
 
-    constructor() ERC1155("https://nfilet.example/api/item/{id}.json") {}
+    string private TOKEN_URI;
+
+    constructor(string memory _name, string _tokenURI) ERC721(_name, "NFLT") {
+        TOKEN_URI = _tokenURI;
+    }
 
     event Minted(address _receiver, uint256 _id, uint256 _amount);
 
-    /**
-     * @dev Verify that the given id is valid.
-     */
-    modifier onlyAvailable(uint256 _id) {
+    modifier onlyTokenOwner(uint256 _tokenId) {
         require(
-            _id == AUDIO || _id == VIDEO || _id == IMAGE,
-            "Invalid file type"
+            ownerOf(_tokenId) == msg.sender || owner() == msg.sender,
+            "Sender is not the owner of this token"
         );
-        _;
     }
 
     /**
      * @dev Mints a new token to the given address.
-     * @param _receiver Address to mint the token to.
-     * @param _id Token id.
-     * @param _amount Amount of tokens to mint.
+     * @param _owner Address to mint the token to.
+     * @param _tokenURI Token URI.
      */
-    function mint(
-        address _receiver,
-        uint256 _id,
-        uint256 _amount
-    ) external override onlyOwner onlyAvailable(_id) returns (bool) {
-        _mint(_receiver, _id, _amount, "");
-        emit Minted(_receiver, _id, _amount);
-        return true;
+    function mint(address _owner) public onlyOwner returns (uint256) {
+        uint256 newItemId = _tokenIds.current();
+        _mint(_owner, newItemId);
+        _setTokenURI(newItemId, tokenUri);
+
+        _tokenIds.increment();
+        return newItemId;
+    }
+
+    /**
+     * @dev See {IERC721Metadata-tokenURI}.
+     * @dev Overrided to restrict usage to the token owner.
+     */
+    function tokenURI(uint256 _tokenId)
+        public
+        view
+        override
+        onlyTokenOwner(_tokenId)
+        returns (string memory)
+    {
+        return TOKEN_URI;
     }
 }

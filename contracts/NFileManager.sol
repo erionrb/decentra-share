@@ -5,25 +5,18 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "./NFileT.sol";
 
 contract NFileManager is Ownable {
-    address public nfileTAddress;
+    event Deployed(address _owner, address _contract);
 
     /**
-     * @dev Mints a new token to the given address.
-     * @param _id Token id.
+     * @dev Deploys a NFT Contract to the sender.
+     * @param _name A name to the NFT Contract that is being deployed.
+     * @param _tokenURI The endpoint that contains the metadata of the NFT.
      */
-    function mint(uint256 _id) public onlyOwner returns (bool) {
-        uint256 tokenId = NFileT(nfileTAddress).mint(msg.sender, _id, 1);
-        return true;
-    }
-
-    /**
-     * @dev Sets the address of the NFileT contract.
-     */
-    function setNFileTAddress(address _nfileTAddress) public onlyOwner {
-        nfileTAddress = _nfileTAddress;
-    }
-
-    function() public payable {
-        revert(true, "Not allowable to receive ethers");
+    function deployContract(string memory _name, string _tokenURI)
+        public
+        onlyOwner
+    {
+        NFileT nftContract = new NFileT(_name, _tokenURI);
+        emit Deployed(msg.sender, address(nftContract));
     }
 }
