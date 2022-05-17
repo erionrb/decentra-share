@@ -4,11 +4,10 @@ pragma solidity 0.8.4;
 interface INFileT {
     /**
      * @dev Mints a new token to the given address.
-     * @param _receiver Address to mint the token to.
-     * @param _id Token id.
-     * @param _amount Amount of tokens to mint.
+     * @param _owner Address to mint the token to.
+     * @param _tokenURI The token URI.
      */
     function mint(address _owner, string memory _tokenURI)
-        public
-        returns (uint256)
+        external
+        returns (uint256);
 }

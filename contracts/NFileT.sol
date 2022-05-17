@@ -12,7 +12,9 @@ contract NFileT is INFileT, ERC721URIStorage, Ownable {
 
     string private TOKEN_URI;
 
-    constructor(string memory _name, string _tokenURI) ERC721(_name, "NFLT") {
+    constructor(string memory _name, string memory _tokenURI)
+        ERC721(_name, "NFLT")
+    {
         TOKEN_URI = _tokenURI;
     }
 
@@ -23,6 +25,7 @@ contract NFileT is INFileT, ERC721URIStorage, Ownable {
             ownerOf(_tokenId) == msg.sender || owner() == msg.sender,
             "Sender is not the owner of this token"
         );
+        _;
     }
 
     /**
@@ -30,10 +33,14 @@ contract NFileT is INFileT, ERC721URIStorage, Ownable {
      * @param _owner Address to mint the token to.
      * @param _tokenURI Token URI.
      */
-    function mint(address _owner) public onlyOwner returns (uint256) {
+    function mint(address _owner, string memory _tokenURI)
+        public
+        onlyOwner
+        returns (uint256)
+    {
         uint256 newItemId = _tokenIds.current();
         _mint(_owner, newItemId);
-        _setTokenURI(newItemId, tokenUri);
+        _setTokenURI(newItemId, _tokenURI);
 
         _tokenIds.increment();
         return newItemId;

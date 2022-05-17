@@ -6,6 +6,7 @@ import "./NFileT.sol";
 
 contract NFileManager is Ownable {
     event Deployed(address _owner, address _contract);
+    event NFileTMinted(address _owner, address _receiver, address _contract);
 
     /**
      * @dev Deploys a NFT Contract to the sender.
@@ -16,7 +17,22 @@ contract NFileManager is Ownable {
         public
         onlyOwner
     {
-        NFileT nftContract = new NFileT(_name, _tokenURI);
+        NFileT nftContract = new NFileT(msg.sender, _name, _tokenURI);
+        nftContract.transferOwnership(msg.sender);
         emit Deployed(msg.sender, address(nftContract));
     }
+
+    /**
+     * @dev Mint a file token to a specific user.
+     * @param _nfiletAddress The address of the NFileT contract.
+     * @param _receiver The address of the receiver.
+     */
+    function mintFileToken(address _nfiletAddress, address _receiver)
+        public
+        onlyNFileTOwner
+    {
+        NFileT nftContract = NFileT(_nfiletAddress).mint(msg.sender);
+        emit NFileTMinted(msg.sender, _receiver, address(nftContract));
+    }
+
 }
