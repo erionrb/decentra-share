@@ -11,26 +11,16 @@ const _abi = [
     inputs: [
       {
         internalType: "address",
-        name: "_receiver",
+        name: "_owner",
         type: "address",
-      },
-      {
-        internalType: "uint256",
-        name: "_id",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "_amount",
-        type: "uint256",
       },
     ],
     name: "mint",
     outputs: [
       {
-        internalType: "bool",
+        internalType: "uint256",
         name: "",
-        type: "bool",
+        type: "uint256",
       },
     ],
     stateMutability: "nonpayable",

@@ -21,17 +21,20 @@ import type { TypedEventFilter, TypedEvent, TypedListener } from "./common";
 
 interface NFileManagerInterface extends ethers.utils.Interface {
   functions: {
-    "mint(uint256)": FunctionFragment;
-    "nfileTAddress()": FunctionFragment;
+    "deployContract(string,string)": FunctionFragment;
+    "mintFileToken(address,address)": FunctionFragment;
     "owner()": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
   };
 
-  encodeFunctionData(functionFragment: "mint", values: [BigNumberish]): string;
   encodeFunctionData(
-    functionFragment: "nfileTAddress",
-    values?: undefined
+    functionFragment: "deployContract",
+    values: [string, string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "mintFileToken",
+    values: [string, string]
   ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
@@ -43,9 +46,12 @@ interface NFileManagerInterface extends ethers.utils.Interface {
     values: [string]
   ): string;
 
-  decodeFunctionResult(functionFragment: "mint", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "nfileTAddress",
+    functionFragment: "deployContract",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "mintFileToken",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
@@ -59,11 +65,27 @@ interface NFileManagerInterface extends ethers.utils.Interface {
   ): Result;
 
   events: {
+    "Deployed(address,address)": EventFragment;
+    "NFileTMinted(address,address,address)": EventFragment;
     "OwnershipTransferred(address,address)": EventFragment;
   };
 
+  getEvent(nameOrSignatureOrTopic: "Deployed"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "NFileTMinted"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
 }
+
+export type DeployedEvent = TypedEvent<
+  [string, string] & { _owner: string; _contract: string }
+>;
+
+export type NFileTMintedEvent = TypedEvent<
+  [string, string, string] & {
+    _owner: string;
+    _receiver: string;
+    _contract: string;
+  }
+>;
 
 export type OwnershipTransferredEvent = TypedEvent<
   [string, string] & { previousOwner: string; newOwner: string }
@@ -113,12 +135,17 @@ export class NFileManager extends BaseContract {
   interface: NFileManagerInterface;
 
   functions: {
-    mint(
-      _id: BigNumberish,
+    deployContract(
+      _name: string,
+      _tokenURI: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    nfileTAddress(overrides?: CallOverrides): Promise<[string]>;
+    mintFileToken(
+      _nfiletAddress: string,
+      _receiver: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
     owner(overrides?: CallOverrides): Promise<[string]>;
 
@@ -132,12 +159,17 @@ export class NFileManager extends BaseContract {
     ): Promise<ContractTransaction>;
   };
 
-  mint(
-    _id: BigNumberish,
+  deployContract(
+    _name: string,
+    _tokenURI: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  nfileTAddress(overrides?: CallOverrides): Promise<string>;
+  mintFileToken(
+    _nfiletAddress: string,
+    _receiver: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
 
   owner(overrides?: CallOverrides): Promise<string>;
 
@@ -151,9 +183,17 @@ export class NFileManager extends BaseContract {
   ): Promise<ContractTransaction>;
 
   callStatic: {
-    mint(_id: BigNumberish, overrides?: CallOverrides): Promise<boolean>;
+    deployContract(
+      _name: string,
+      _tokenURI: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
-    nfileTAddress(overrides?: CallOverrides): Promise<string>;
+    mintFileToken(
+      _nfiletAddress: string,
+      _receiver: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     owner(overrides?: CallOverrides): Promise<string>;
 
@@ -166,6 +206,40 @@ export class NFileManager extends BaseContract {
   };
 
   filters: {
+    "Deployed(address,address)"(
+      _owner?: null,
+      _contract?: null
+    ): TypedEventFilter<
+      [string, string],
+      { _owner: string; _contract: string }
+    >;
+
+    Deployed(
+      _owner?: null,
+      _contract?: null
+    ): TypedEventFilter<
+      [string, string],
+      { _owner: string; _contract: string }
+    >;
+
+    "NFileTMinted(address,address,address)"(
+      _owner?: null,
+      _receiver?: null,
+      _contract?: null
+    ): TypedEventFilter<
+      [string, string, string],
+      { _owner: string; _receiver: string; _contract: string }
+    >;
+
+    NFileTMinted(
+      _owner?: null,
+      _receiver?: null,
+      _contract?: null
+    ): TypedEventFilter<
+      [string, string, string],
+      { _owner: string; _receiver: string; _contract: string }
+    >;
+
     "OwnershipTransferred(address,address)"(
       previousOwner?: string | null,
       newOwner?: string | null
@@ -184,12 +258,17 @@ export class NFileManager extends BaseContract {
   };
 
   estimateGas: {
-    mint(
-      _id: BigNumberish,
+    deployContract(
+      _name: string,
+      _tokenURI: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    nfileTAddress(overrides?: CallOverrides): Promise<BigNumber>;
+    mintFileToken(
+      _nfiletAddress: string,
+      _receiver: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
 
     owner(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -204,12 +283,17 @@ export class NFileManager extends BaseContract {
   };
 
   populateTransaction: {
-    mint(
-      _id: BigNumberish,
+    deployContract(
+      _name: string,
+      _tokenURI: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    nfileTAddress(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    mintFileToken(
+      _nfiletAddress: string,
+      _receiver: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
 
     owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 

@@ -9,15 +9,26 @@ contract NFileManager is Ownable {
     event NFileTMinted(address _owner, address _receiver, address _contract);
 
     /**
+     * @dev Only the NFT contract owner can operate.
+     */
+    modifier onlyNFileTOwner(address _nfiletAddress) {
+        require(
+            msg.sender != NFileT(_nfiletAddress).owner(),
+            "Sender is not the NFileT owner"
+        );
+        _;
+    }
+
+    /**
      * @dev Deploys a NFT Contract to the sender.
      * @param _name A name to the NFT Contract that is being deployed.
      * @param _tokenURI The endpoint that contains the metadata of the NFT.
      */
-    function deployContract(string memory _name, string _tokenURI)
+    function deployContract(string memory _name, string memory _tokenURI)
         public
         onlyOwner
     {
-        NFileT nftContract = new NFileT(msg.sender, _name, _tokenURI);
+        NFileT nftContract = new NFileT(_name, _tokenURI);
         nftContract.transferOwnership(msg.sender);
         emit Deployed(msg.sender, address(nftContract));
     }
@@ -29,10 +40,9 @@ contract NFileManager is Ownable {
      */
     function mintFileToken(address _nfiletAddress, address _receiver)
         public
-        onlyNFileTOwner
+        onlyNFileTOwner(_nfiletAddress)
     {
-        NFileT nftContract = NFileT(_nfiletAddress).mint(msg.sender);
-        emit NFileTMinted(msg.sender, _receiver, address(nftContract));
+        NFileT(_nfiletAddress).mint(msg.sender);
+        emit NFileTMinted(msg.sender, _receiver, _nfiletAddress);
     }
-
 }

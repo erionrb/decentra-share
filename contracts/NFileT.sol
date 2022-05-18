@@ -23,7 +23,7 @@ contract NFileT is INFileT, ERC721URIStorage, Ownable {
     modifier onlyTokenOwner(uint256 _tokenId) {
         require(
             ownerOf(_tokenId) == msg.sender || owner() == msg.sender,
-            "Sender is not the owner of this token"
+            "Sender is not the owner of this token or the contract"
         );
         _;
     }
@@ -31,18 +31,14 @@ contract NFileT is INFileT, ERC721URIStorage, Ownable {
     /**
      * @dev Mints a new token to the given address.
      * @param _owner Address to mint the token to.
-     * @param _tokenURI Token URI.
      */
-    function mint(address _owner, string memory _tokenURI)
-        public
-        onlyOwner
-        returns (uint256)
-    {
+    function mint(address _owner) public override onlyOwner returns (uint256) {
         uint256 newItemId = _tokenIds.current();
         _mint(_owner, newItemId);
-        _setTokenURI(newItemId, _tokenURI);
+        _setTokenURI(newItemId, TOKEN_URI);
 
         _tokenIds.increment();
+        emit Minted(_owner, newItemId, 1);
         return newItemId;
     }
 
