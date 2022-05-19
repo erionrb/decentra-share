@@ -22,7 +22,7 @@ import type { TypedEventFilter, TypedEvent, TypedListener } from "./common";
 interface NFileManagerInterface extends ethers.utils.Interface {
   functions: {
     "deployContract(string,string)": FunctionFragment;
-    "mintFileToken(address,address)": FunctionFragment;
+    "getNFTContracts()": FunctionFragment;
     "owner()": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
@@ -33,8 +33,8 @@ interface NFileManagerInterface extends ethers.utils.Interface {
     values: [string, string]
   ): string;
   encodeFunctionData(
-    functionFragment: "mintFileToken",
-    values: [string, string]
+    functionFragment: "getNFTContracts",
+    values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
@@ -51,7 +51,7 @@ interface NFileManagerInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "mintFileToken",
+    functionFragment: "getNFTContracts",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
@@ -141,11 +141,7 @@ export class NFileManager extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    mintFileToken(
-      _nfiletAddress: string,
-      _receiver: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+    getNFTContracts(overrides?: CallOverrides): Promise<[string[]]>;
 
     owner(overrides?: CallOverrides): Promise<[string]>;
 
@@ -165,11 +161,7 @@ export class NFileManager extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  mintFileToken(
-    _nfiletAddress: string,
-    _receiver: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
+  getNFTContracts(overrides?: CallOverrides): Promise<string[]>;
 
   owner(overrides?: CallOverrides): Promise<string>;
 
@@ -189,11 +181,7 @@ export class NFileManager extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    mintFileToken(
-      _nfiletAddress: string,
-      _receiver: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
+    getNFTContracts(overrides?: CallOverrides): Promise<string[]>;
 
     owner(overrides?: CallOverrides): Promise<string>;
 
@@ -264,11 +252,7 @@ export class NFileManager extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    mintFileToken(
-      _nfiletAddress: string,
-      _receiver: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
+    getNFTContracts(overrides?: CallOverrides): Promise<BigNumber>;
 
     owner(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -289,11 +273,7 @@ export class NFileManager extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    mintFileToken(
-      _nfiletAddress: string,
-      _receiver: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
+    getNFTContracts(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
