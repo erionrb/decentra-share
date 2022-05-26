@@ -1,12 +1,8 @@
 import { useState, useEffect } from "react";
 
 import Menu from "./components/Menu";
-import Upload from "./components/Upload";
-import Download from "./components/Download";
 
-import "./App.css";
-
-function App() {
+export default function Home() {
   const [nfts, setNfts] = useState([]);
 
   useEffect(() => {
@@ -24,15 +20,5 @@ function App() {
     ]);
   }, []);
 
-  return (
-    <div className="p-10">
-      <Menu />
-      <br />
-      <Upload />
-      <br />
-      <Download content={nfts} />
-    </div>
-  );
+  return <div>Index</div>;
 }
-
-export default App;

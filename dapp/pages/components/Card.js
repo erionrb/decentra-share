@@ -1,10 +1,12 @@
-import FileDefault from "./file.jpg";
+import FileDefault from "../../public/file.jpg";
 import MyButton from "./MyButton";
+
+import Image from "next/image";
 
 const Card = ({ model }) => {
   return (
     <div className="rounded overflow-hidden bg-indigo-400 text-cyan-50">
-      <img src={FileDefault} alt="Default File" />
+      <Image src={FileDefault} alt="Default File" />
       <div className="px-6 py-4">
         <div className="font-bold text-xl mb-2">{model.title}</div>
         <p>{model.text}</p>

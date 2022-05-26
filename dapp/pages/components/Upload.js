@@ -5,7 +5,7 @@ const Upload = () => {
   const [fileLink, setFileLink] = useState("");
   return (
     <>
-      <div className="bg-slate-800 rounded p-5">
+      <div className="bg-gray-700 rounded p-5">
         {/* Select File */}
         <MyButton type="success">Select File</MyButton>
 
